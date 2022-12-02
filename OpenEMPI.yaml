@@ -1,0 +1,3984 @@
+openapi: 3.0.0
+x-stoplight:
+  id: aioe1531j09fz
+info:
+  title: OpenEMPI
+  version: '1.0'
+  description: OpenEMPI's REST API
+  contact: {}
+servers:
+  - url: 'http://localhost:8000'
+paths:
+  '/{versionId}/audit-events':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Get the list of audit event
+      operationId: get-versionId-audit-events
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditEventType'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditEventType'
+        '400':
+          description: The request was invalid
+        '404':
+          description: There is no such entity in the system
+      tags:
+        - Audit Events Resource
+      description: |-
+        This endpoint allows you to retrieve the list of audit events that satisfy the request criteria specified
+        in the request. You may filter the list of audit events returned using the start date, end date, and
+        event types. The endpoint also allows you to page through the requests using the paging
+        parameters. The start and end dates should be in the format YYYYMMDD and the event types
+        should be specified as a comma separated list of event type codes (e.g.: 101,102).
+      parameters:
+        - schema:
+            type: string
+            example: '20221231'
+          in: query
+          name: endDate
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+        - schema:
+            type: string
+            format: int32
+          in: query
+          name: eventTypes
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: firstResult
+        - schema:
+            type: integer
+            format: int32
+            default: 100
+          in: query
+          name: maxResults
+        - schema:
+            type: string
+            example: '20221231'
+          in: query
+          name: startDate
+  '/{versionId}/audit-events/types':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Get the list of audit event types.
+      tags:
+        - Audit Events Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditEventType'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditEventType'
+        '400':
+          description: The request was invalid
+      operationId: get-versionId-audit-events-types
+      description: This endpoint allows you to retrieve the list of audit event types that the system records
+  '/{versionId}/blocking-configuration/indexes':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    put:
+      summary: Rebuild the blocking algorithm indexes
+      operationId: put-versionId-blocking-configuration-indexes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+        '400':
+          description: The request was invalid
+        '404':
+          description: No such entity was found
+        '500':
+          description: 'Failed to process the request '
+      description: |-
+        This endpoint allows you to rebuild the indexes that the blocking algorithm uses to speed up the
+        generation of record/block association information. This needs to be done when the configuration
+        of the blocking rounds changes.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+      tags:
+        - Blocking Configuration Resource
+  '/{versionId}/blocking-configuration':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Get the blocking service configuration
+      tags:
+        - Blocking Configuration Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockingConfiguration'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BlockingConfiguration'
+        '400':
+          description: The request was invalid
+        '404':
+          description: 'No such entity was found '
+        '500':
+          description: Failed to process the request
+      operationId: get-versionId-blocking-configuration
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+      description: This endpoint allows you to retrieve the current configuration of the blocking service.
+    put:
+      summary: Update the blocking service configuration
+      operationId: put-versionId-blocking-configuration
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockingConfiguration'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BlockingConfiguration'
+        '400':
+          description: 'The request was invalid '
+        '404':
+          description: No such entity was found
+        '500':
+          description: Failed to process the request
+      description: This endpoint allows you to update the current configuration of the blocking service.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlockingConfiguration'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/BlockingConfiguration'
+      tags:
+        - Blocking Configuration Resource
+  '/{versionId}/custom-fields':
+    get:
+      summary: Retrieve the list of custom fields of an entity
+      tags:
+        - Custom Fields Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomField'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomField'
+        '400':
+          description: No such entity or no custom field was found
+        '404':
+          description: 'The request was invalid '
+      operationId: get-versionId-custom-fields
+      description: This endpoint allows you to retrieve the list of custom fields defined in association with an entity that is located by its unique identifier.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+    post:
+      summary: Add a new custom field definition
+      operationId: post-versionId-custom-fields
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+        '400':
+          description: No such entity was found
+        '404':
+          description: The custom field definition is invalid
+        '500':
+          description: Unable to create the custom field
+      description: This endpoint allows you to define a new custom field.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomField'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CustomField'
+      tags:
+        - Custom Fields Resource
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+  '/{versionId}/custom-fields/name/{name}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: name
+        in: path
+        required: true
+    get:
+      summary: Retrieve the custom field by name
+      tags:
+        - Custom Fields Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+        '400':
+          description: No such entity or no custom field was found
+        '404':
+          description: The request was invalid
+      operationId: get-versionId-custom-fields-name-name
+      description: This endpoint allows you to retrieve the definition of a custom field by its unique field name.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+  '/{versionId}/custom-fields/records':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    put:
+      summary: Generate custom fields for all records
+      operationId: put-versionId-custom-fields-records
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+      description: This endpoint allows you to regenerate the values for all custom fields currently defined against all the records in the repository. The response from the request is a job entry that refers to the job that was created to handle the regeneration of the custom fields for all records in an asynchronous manner.
+      tags:
+        - Custom Fields Resource
+  '/{versionId}/custom-fields/{id}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Retrieve the custom field by id
+      tags:
+        - Custom Fields Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+        '400':
+          description: The request was invalid
+        '404':
+          description: Not Found
+      operationId: get-versionId-custom-fields-id
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+      description: This endpoint allows you to retrieve the definition of a custom field by its id.
+    put:
+      summary: ''
+      operationId: put-versionId-custom-fields-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Custom Fields Resource
+      description: |-
+        This endpoint allows you to update a custom field and modify the transformation function used or
+        the parameters and values of the transformation function.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomField'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CustomField'
+    delete:
+      summary: ''
+      operationId: delete-versionId-custom-fields-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Custom Fields Resource
+      description: This endpoint allows you to delete a previously defined custom field by its id.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+  '/{versionId}/data-profiles':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Get the list of generated data profiles
+      tags:
+        - Data Profile Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataProfile'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataProfile'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-data-profiles
+      description: This endpoint allows you to retrieve the list of generated data profiles.
+    post:
+      summary: Generate a data profile against an entity
+      operationId: post-versionId-data-profiles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: |-
+        Use this endpoint to generate a data profile based on data that is present in the repository for a
+        specific entity definition. For example, you can generate a data profile for the data loaded on the
+        default person entity by providing the entityId for the person entity.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+      tags:
+        - Data Profile Resource
+  '/{versionId}/data-profiles/file/{userFileId}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: userFileId
+        in: path
+        required: true
+    post:
+      summary: Generate a data profile using data from a file
+      operationId: post-versionId-data-profiles-file-userFileId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Use this endpoint to generate a data profile based on data that is present in a user file.
+      tags:
+        - Data Profile Resource
+  '/{versionId}/data-profiles/{dataProfileId}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: dataProfileId
+        in: path
+        required: true
+    get:
+      summary: Get the data profile
+      tags:
+        - Data Profile Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataProfile'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DataProfile'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-data-profiles-dataProfileId
+      description: This endpoint allows you to retrieve the data profile identified by its unique identifier
+    delete:
+      summary: Delete the data profile
+      operationId: delete-versionId-data-profiles-dataProfileId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataProfile'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DataProfile'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: This endpoint allows you to delete the data profile identified by its unique identifier.
+      tags:
+        - Data Profile Resource
+  '/{versionId}/data-profiles/{dataProfileId}/attributes':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: dataProfileId
+        in: path
+        required: true
+    get:
+      summary: Get the list of attributes of a data profile
+      tags:
+        - Data Profile Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataProfileAttribute'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataProfileAttribute'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-data-profiles-dataProfileId-attributes
+      description: This endpoint allows you to retrieve the list of attributes for the generated data profile specified by the dataProfileId parameter.
+  '/{versionId}/data-profiles/{dataProfileId}/attributes/{attributeId}/values':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: dataProfileId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: attributeId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Data Profile Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataProfileAttributeValue'
+      operationId: get-versionId-data-profiles-dataProfileId-attributes-attributeId-values
+      description: This endpoint allows you to retrieve the list of values that occur frequently for a given data profile attribute along with its frequency of occurrence for each such value. You must specify the data profile and the specific attributes whose frequent value distribution you want to receive.
+  '/{versionId}/deterministic-matching/configuration':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Get the deterministic matching service configuration
+      tags:
+        - Deterministic Matching Configuration Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-deterministic-matching-configuration
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+      description: |-
+        This endpoint allows you to retrieve the current configuration of the deterministic matching
+        service.
+    put:
+      summary: Update the deterministic matching configuration
+      operationId: put-versionId-deterministic-matching-configuration
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeterministicMatchingConfiguration'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeterministicMatchingConfiguration'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: This endpoint allows you to update the current configuration of the deterministic matching service.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeterministicMatchingConfiguration'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DeterministicMatchingConfiguration'
+      tags:
+        - Deterministic Matching Configuration Resource
+  '/{versionId}/deterministic-matching/model':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    put:
+      summary: Initialize the classification model for the matching algorithm
+      operationId: put-versionId-deterministic-matching-model
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: This endpoint allows you to initialize the classification model that the particular matching algorithm uses to make classification decisions. This needs to be done when the configuration of the matching algorithm is initially setup or when the configuration changes. Once the system is running in production you should not run this operation since it will overwrite any customization you have applied to the configuration of the matching algorithm.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+      tags:
+        - Deterministic Matching Configuration Resource
+  '/{versionId}/entities':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    post:
+      summary: Create a new entity
+      operationId: post-versionId-entities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Entity'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+      description: |
+        Creates a new entity using the object provided in the body of the request.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entity'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Entity'
+      tags:
+        - Entities Resource
+    get:
+      summary: Get the list of entities known to the instance
+      operationId: get-versionId-entities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entity'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entity'
+        '400':
+          description: Bad Request
+      tags:
+        - Entities Resource
+      description: This endpoint allows you to retrieve the list of all known entities on this instance of OpenEMPI
+  '/{versionId}/entities/importFile/{userFileId}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: userFileId
+        in: path
+        required: true
+    post:
+      summary: Import an entity from an uploaded file
+      operationId: post-versionId-entities-importFile-userFileId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Entity'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Use this endpoint to import an entity definition from a file. The file is referenced using its unique user file entry identifier.
+      tags:
+        - Entities Resource
+  '/{versionId}/entities/{id}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Get the entity by its id
+      tags:
+        - Entities Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Entity'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-entities-id
+      description: This endpoint allows you to retrieve a specific entity definition using its unique identifier
+      parameters: []
+    put:
+      summary: Update an entity entity
+      operationId: put-versionId-entities-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Entity'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Entities Resource
+      description: Update the entity definition identified by the id in the path using the information provided in the body of the request.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entity'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Entity'
+    delete:
+      summary: Delete the entity by its id
+      operationId: delete-versionId-entities-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Entity'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Entities Resource
+      description: This endpoint allows you to delete an entity definition using its unique identifier. Note that this will not delete the database directory that supports this entity and this must bedone manually after the server has been shutdown.
+      parameters:
+        - schema:
+            type: boolean
+            default: true
+          in: query
+          name: purge
+  '/{versionId}/entities/{id}/indexes':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Create indexes for entity
+      operationId: post-versionId-entities-id-indexes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Creates indexes for the entity specified through the path parameter. The assumption is that the indexes were previously dropped or never existed.
+      tags:
+        - Entities Resource
+    delete:
+      summary: Drop indexes for entity
+      operationId: delete-versionId-entities-id-indexes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: Drops indexes for the entity specified through the path parameter.
+      tags:
+        - Entities Resource
+  '/{versionId}/entities/{id}/attribute-groups':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Retrieve the list of attribute groups of an entity
+      tags:
+        - Entity Attribute Groups Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityAttributeGroup'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityAttributeGroup'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-entities-id-attribute-groups
+      description: This endpoint allows you to retrieve the list of attribute groups in an entity that is located by its unique identifier.
+    post:
+      summary: Add a new attribute group to an entity definition
+      operationId: post-versionId-entities-id-attribute-groups
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityAttributeGroup'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EntityAttributeGroup'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+      tags:
+        - Entity Attribute Groups Resource
+      description: This endpoint allows you to add a new attribute group to an existing entity definition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityAttributeGroup'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EntityAttributeGroup'
+  '/{versionId}/entities/{id}/attribute-groups/{entityAttributeGroupId}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: entityAttributeGroupId
+        in: path
+        required: true
+    get:
+      summary: Retrieve an entity attribute group
+      tags:
+        - Entity Attribute Groups Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityAttributeGroup'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EntityAttributeGroup'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-entities-id-attribute-groups-entityAttributeGroupId
+      description: This endpoint allows you to load the details of an attribute group in an entity that is located by entity identifier and entity attribute group identifier
+    put:
+      summary: Update an attribute group of an entity definition
+      operationId: put-versionId-entities-id-attribute-groups-entityAttributeGroupId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityAttributeGroup'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EntityAttributeGroup'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityAttributeGroup'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EntityAttributeGroup'
+      description: This endpoint allows you to update an attribute group of an existing entity definition
+      tags:
+        - Entity Attribute Groups Resource
+    delete:
+      summary: Delete an entity attribute group
+      operationId: delete-versionId-entities-id-attribute-groups-entityAttributeGroupId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityAttributeGroup'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EntityAttributeGroup'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Entity Attribute Groups Resource
+      description: This endpoint allows you to delete an attribute group in an entity that is located by entity identifier and entity attribute group identifier.
+  '/{versionId}/entities/{id}/entity-attributes':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Retrieve the list of attributes of an entity
+      tags:
+        - Entity Attributes Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityAttribute'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityAttribute'
+        '400':
+          description: Bad Request
+      operationId: get-versionId-entities-id-entity-attributes
+      description: This endpoint allows you to retrieve the list of attributes in an entity that is located by its unique identifier.
+    post:
+      summary: Add a new attribute to an entity definition
+      operationId: post-versionId-entities-id-entity-attributes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityAttribute'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EntityAttribute'
+        '400':
+          description: Bad Request
+      tags:
+        - Entity Attributes Resource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityAttribute'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EntityAttribute'
+      description: This endpoint allows you to add a new attribute to an existing entity definition
+  '/{versionId}/entities/{id}/entity-attributes/{attribId}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: attribId
+        in: path
+        required: true
+    get:
+      summary: Retrieve an attribute of an entity
+      tags:
+        - Entity Attributes Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityAttribute'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EntityAttribute'
+        '400':
+          description: Bad Request
+      operationId: get-versionId-entities-id-entity-attributes-attribId
+      description: This endpoint allows you to retrieve the definition of an entity attribute using the attribute’s unique identifier.
+    put:
+      summary: Update an entity attribute
+      operationId: put-versionId-entities-id-entity-attributes-attribId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityAttribute'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityAttribute'
+        '400':
+          description: Bad Request
+      description: This endpoint allows you to update the definition of an entity attribute
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityAttribute'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EntityAttribute'
+      tags:
+        - Entity Attributes Resource
+  '/{versionId}/files':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Retrieve all the user file entries
+      tags:
+        - File Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/File'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/File'
+      operationId: get-versionId-files
+      description: This endpoint allows you to retrieve all the user file entries from the system
+    post:
+      summary: Import a new file
+      operationId: post-versionId-files
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/File'
+        '400':
+          description: Bad Request
+      tags:
+        - File Resource
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
+      description: |-
+        This endpoint allows you upload a new file onto the server, creating an instance of a file resource
+        in the process
+  '/{versionId}/files/entities/{id}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Export an entity into a file
+      operationId: post-versionId-files-entities-id
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema: {}
+        '400':
+          description: Bad Request
+      description: 'This endpoint allows you to export an entity definition, creating a file in the process. This is useful for backing up the definition of an entity and may be used to either recreate the entity or create a clone of the entity after changing the name of the entity in the export file. The id refers to the entity that will be exported into a file.'
+      tags:
+        - File Resource
+  '/{versionId}/files/entities/{id}/records':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Export records of entity into a file
+      operationId: post-versionId-files-entities-id-records
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema: {}
+        '400':
+          description: Bad Request
+      description: This endpoint allows you to export all the records of an entity. This is useful for backing up the records of an entity or to make the data available to another system
+      tags:
+        - File Resource
+  '/{versionId}/files/{id}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Retrieve a user file entry
+      tags:
+        - File Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/File'
+        '404':
+          description: Not Found
+      operationId: get-versionId-files-id
+      description: This endpoint allows you to retrieve a user file entry from the system
+    put:
+      summary: Update a user file entry
+      operationId: put-versionId-files-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/File'
+        '400':
+          description: Bad Request
+      description: This endpoint allows you update the metadata associated with a user file entry.
+      tags:
+        - File Resource
+    delete:
+      summary: Delete a user file
+      operationId: delete-versionId-files-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/File'
+        '404':
+          description: Not Found
+      description: This endpoint allows you to delete a file entry from the system
+      tags:
+        - File Resource
+  '/{versionId}/identifier-domains':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    post:
+      summary: Define a new identifier domain
+      operationId: post-versionId-identifier-domains
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentifierDomain'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/IdentifierDomain'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+      tags:
+        - Identifier Domains Resource
+      description: 'Use this endpoint to define a new identifier domain. An identifier domain is an object that defines an organization that assigns identifiers to records. An identifier domain must at least have an identifier domain name and either a namespace identifier, the pair universal identifier and identifier type code, or both values specified. When creating a new identifier you must not specify an identifier domain id as it is assigned by the system.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentifierDomain'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/IdentifierDomain'
+    get:
+      summary: Retrieve all known identifier domains
+      operationId: get-versionId-identifier-domains
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentifierDomain'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentifierDomain'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Identifier Domains Resource
+      description: Use this endpoint to retrieve all known identifier domains by this instance
+  '/{versionId}/identifier-domains/{id}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int32
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Retrieve an identifier domain by its id
+      tags:
+        - Identifier Domains Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentifierDomain'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/IdentifierDomain'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-identifier-domains-id
+      description: |-
+        Use this endpoint to retrieve the definition of an identifier domain using its unique identifier to
+        locate it.
+    put:
+      summary: Update an identifier domain
+      operationId: put-versionId-identifier-domains-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentifierDomain'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/IdentifierDomain'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+      tags:
+        - Identifier Domains Resource
+      description: Use this endpoint to update the value of an identifier domain. An identifier domain is an object that defines an organization that assigns identifiers to records. The identifier domain id you provide in the path must point to an existing identifier domain.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentifierDomain'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/IdentifierDomain'
+    delete:
+      summary: Delete an identifier domai
+      operationId: delete-versionId-identifier-domains-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentifierDomain'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/IdentifierDomain'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+      tags:
+        - Identifier Domains Resource
+      description: Use this endpoint to delete an identifier domain. The identifier domain id you provide in the path must point to an existing identifier domain.
+  '/{versionId}/notifications':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Retrieve update notification events
+      tags:
+        - Notifications Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentifierUpdateEvent'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentifierUpdateEvent'
+        '400':
+          description: Bad Request
+      operationId: get-versionId-notifications
+      description: Retrieve update notification events that are stored in the repository. You may use the paging parameters to control how many notification events are returned and the starting offset of those events. You may also indicate that the notification returned should be deleted from the repository. It is highly recommended that you delete notification events after receiving them to prevent them from accumulating on the server and negatively affecting server performance.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+            minimum: 0
+          in: query
+          name: firstRecord
+        - schema:
+            type: integer
+            format: int32
+            default: 100
+          in: query
+          name: maxRecords
+        - schema:
+            type: boolean
+            default: false
+          in: query
+          name: removeRecords
+  '/{versionId}/notifications/getNotificationCount':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Notifications Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema: {}
+        '400':
+          description: Bad Request
+      operationId: get-versionId-notifications-getNotificationCount
+      description: Returns the total number of notifications that are stored in the repository.
+  '/{versionId}/notifications/retrieveNotificationsByDate':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Retrieve update notification events
+      tags:
+        - Notifications Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentifierUpdateEvent'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentifierUpdateEvent'
+        '400':
+          description: Bad Request
+      operationId: get-versionId-notifications-retrieveNotificationsByDate-versionId-notifications-retrieveNotificationsByDate
+      description: 'Retrieve update notification events that are stored in the repository and that were generated after the specified date. You may also filter the returned events using the end date of the event, the source type and the transition type. You may also indicate that the notification returned should be deleted from the repository. It is highly recommended that you delete notification events after receiving them to prevent them from accumulating on the server and negatively affecting server performance.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: date
+        - schema:
+            type: string
+          in: query
+          name: endDate
+        - schema:
+            type: boolean
+            default: false
+          in: query
+          name: removeRecords
+        - schema:
+            type: string
+          in: query
+          name: source
+        - schema:
+            type: string
+          in: query
+          name: transition
+  '/{versionId}/notifications/{id}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: integer
+          format: int64
+        name: id
+        in: path
+        required: true
+    delete:
+      summary: Delete update notification event
+      operationId: delete-versionId-notifications-id
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+      description: Delete an update notification event from the repository. This is usually done after the event has been retrieved by a client application and has been processed.
+      tags:
+        - Notifications Resource
+  '/{versionId}/pixpdq-service/state':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Get the current state of the PIX/PDQ server
+      tags:
+        - PIX/PDQ Service Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+      operationId: get-versionId-pixpdq-service-state
+      description: Use this endpoint to get the current running state of the HL7v2 PIX/PDQ server.
+  '/{versionId}/pixpdq-service/state/{updown}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: string
+          enum:
+            - up
+            - down
+        name: updown
+        in: path
+        required: true
+    put:
+      summary: Change the state of the PIX/PDQ server
+      operationId: put-versionId-pixpdq-service-state-updown
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+      tags:
+        - PIX/PDQ Service Resource
+      description: |-
+        Use this endpoint to change the running state of the HL7v2 PIX/PDQ server. You can use this
+        endpoint to start or stop the server.
+  '/{versionId}/probabilistic-matching/configuration':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Get the probabilistic matching service configuration
+      tags:
+        - Probabilistic Matching Configuration Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProbabilisticMatchingConfiguration'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: ''
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-probabilistic-matching-configuration
+      description: This endpoint allows you to retrieve the current configuration of the probabilistic matching service
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+    put:
+      summary: Update the probabilistic matching configuration
+      operationId: put-versionId-probabilistic-matching-configuration
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProbabilisticMatchingConfiguration'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProbabilisticMatchingConfiguration'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Probabilistic Matching Configuration Resource
+      description: This endpoint allows you to update the current configuration of the probabilistic matching service.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProbabilisticMatchingConfiguration'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ProbabilisticMatchingConfiguration'
+  '/{versionId}/probabilistic-matching/configuration/field':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-versionId-probabilistic-matching-configuration-field
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProbabilisticMatchingConfiguration'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProbabilisticMatchingConfiguration'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+      description: This endpoint allows you to add a new field to the current configuration of the probabilistic matching service.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchField'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/MatchField'
+      tags:
+        - Probabilistic Matching Configuration Resource
+    delete:
+      summary: This endpoint allows you to delete a field from the current configuration of the probabilistic matching service.
+      operationId: delete-versionId-probabilistic-matching-configuration-field
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProbabilisticMatchingConfiguration'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProbabilisticMatchingConfiguration'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: |-
+        This endpoint allows you to delete a field from the current configuration of the probabilistic
+        matching service.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchField'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/MatchField'
+      tags:
+        - Probabilistic Matching Configuration Resource
+  '/{versionId}/probabilistic-matching/model':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    put:
+      summary: Initialize the classification model for the matching algorithm
+      operationId: put-versionId-probabilistic-matching-model
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      description: This endpoint allows you to initialize the classification model that the particular matching algorithm uses to make classification decisions. This needs to be done when the configuration of the matching algorithm is initially setup or when the configuration changes. Once the system is running in production you should not run this operation since it will overwrite any customization you have applied to the configuration of the matching algorithm.
+      tags:
+        - Probabilistic Matching Configuration Resource
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+  '/{versionId}/record-links':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    get:
+      summary: Retrieve record links from entity
+      tags:
+        - Record Links Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecordLink'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecordLink'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-record-links
+      description: 'This endpoint allows you to retrieve all the known record links between records of an entity. You can filter the record links returned by state otherwise only links of match state are returned. The possible values are ''M'' for match links, ''P'' for probable links and ''A'' for links of all states. You can also page through the links in the repository using the parameters ''firstResult'' and ''maxResults''.'
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+        - schema:
+            type: integer
+          in: query
+          name: firstResult
+        - schema:
+            type: string
+          in: query
+          name: keyVal
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: maxResults
+        - schema:
+            type: string
+            default: M
+            enum:
+              - M
+              - P
+              - A
+          in: query
+          name: state
+    post:
+      summary: Add a record link
+      operationId: post-versionId-record-links
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordLink'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/RecordLink'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+      description: This endpoint allows you to add a new record link to the system. The record link must be associated with a known entity and the two records that it links must already exist in the repository of the entity to which the link is being added.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordLink'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/RecordLink'
+      tags:
+        - Record Links Resource
+  '/{versionId}/record-links/probable-links':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+    put:
+      summary: Reevaluate probable links using the matching algorithm
+      operationId: put-versionId-record-links-probable-links
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/JobEntry'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Record Links Resource
+      description: This endpoint allows you to re-evaluate all record pairs that have been classified as probable links against the matching algorith and reassess their relationship to other records.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+  '/{versionId}/record-links/record/{recordId}':
+    parameters:
+      - schema:
+          type: integer
+          format: int64
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: string
+          default: '1.0'
+        name: recordId
+        in: path
+        required: true
+    get:
+      summary: Retrieve record links associated with record
+      tags:
+        - Record Links Resource
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecordLink'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecordLink'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      operationId: get-versionId-record-links-record-recordId
+      description: This endpoint allows you to retrieve record links associated with the record identified by the recordId value. You may filter the response to links of a given state such as match or probable links.
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - 'Y'
+          in: query
+          name: direct
+          allowEmptyValue: true
+          description: 'Restricting links to those that are direct only ensures that links returned are only those that are directly associated with the record identified by the recordId parameter. By default, it returns all links along the path of traversed links starting from the record identified by the recordId parameter. Use a value of ''Y'' to indicate that only direct links should be returned'
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: state
+  '/{versionId}/record-links/{id}':
+    parameters:
+      - schema:
+          type: string
+          default: '1.0'
+        name: versionId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    put:
+      summary: Update a record link
+      operationId: put-versionId-record-links-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordLink'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/RecordLink'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+      tags:
+        - Record Links Resource
+      description: This endpoint allows you to update a record link in the system. The record link must already exist and the only value that can be updated is the state of the record link. This endpoint can be used to change a probable link to either a match link (state is 'M') or to a non-match (state is 'N') link.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordLink'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/RecordLink'
+    delete:
+      summary: Delete a record link
+      operationId: delete-versionId-record-links-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordLink'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/RecordLink'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+        '500':
+          description: Internal Server Error
+      tags:
+        - Record Links Resource
+      description: This endpoint allows you to delete a record link from the system. The record link must exist in the repository.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+    get:
+      summary: Retrieve record link by id
+      operationId: get-versionId-record-links-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordLink'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/RecordLink'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      tags:
+        - Record Links Resource
+      description: This endpoint allows you to retrieve a record link using its unique identifier.
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: entityId
+          required: true
+  /security-resource/authenticate:
+    put:
+      summary: Authenticate a user
+      operationId: put-security-resource-authenticate
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+      tags:
+        - Security Resource
+      description: This endpoint allows you to authenticate a user using a username and password. You must first authenticate a user with OpenEMPI and receive a session key before you attempt any other operation that requires a session key. Once you have successfully received a session key back you must provide it in subsequent REST API requests using the header OPENEMPI_SESSION_KEY.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/authenticationRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/authenticationRequest'
+components:
+  schemas:
+    Address:
+      title: Address
+      type: object
+      description: ''
+      x-examples:
+        Alice Smith:
+          address: 123 Main St
+          city: Metropolis
+          country: United States
+          postalCode: '12345'
+          province: New York
+      properties:
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        province:
+          type: string
+    AddressType:
+      title: AddressType
+      x-stoplight:
+        id: mz7v3fk6w5upa
+      type: object
+      properties:
+        addressTypeCd:
+          type: integer
+          format: int32
+        addressTypeCode:
+          type: string
+        adrdressTypeDescription:
+          type: string
+        addressTypeName:
+          type: string
+    AuditEventEntry:
+      title: AuditEventEntry
+      x-stoplight:
+        id: sjes4jqy3aaoe
+      type: object
+      properties:
+        altRefRecord:
+          $ref: '#/components/schemas/Record'
+        altRefRecordId:
+          type: integer
+          format: int64
+        auditEventDescription:
+          type: string
+        auditEventTypeId:
+          type: integer
+          format: int64
+        auditEventId:
+          type: integer
+          format: int64
+        dateCreatedStr:
+          type: string
+        entityName:
+          type: string
+        refRecord:
+          $ref: '#/components/schemas/Record'
+        refRecordId:
+          type: integer
+          format: int64
+        userCreatedById:
+          type: integer
+          format: int64
+    AuditEventType:
+      title: AuditEventType
+      x-stoplight:
+        id: uwdfy2h2g8p29
+      type: object
+      properties:
+        auditEventTypeCd:
+          type: integer
+          format: int32
+        auditEventTypeCode:
+          type: string
+        auditEventTypeDescription:
+          type: string
+        auditEventTypeName:
+          type: string
+    BlockingConfiguration:
+      title: BlockingConfiguration
+      x-stoplight:
+        id: zb148kqa9qi20
+      type: object
+      properties:
+        blockingRounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlockingRound'
+        entityName:
+          type: string
+        entityVersionId:
+          type: integer
+          format: int32
+        maximumBlockSize:
+          type: integer
+          format: int32
+    BlockingRound:
+      title: BlockingRound
+      x-stoplight:
+        id: q8r372lxg6oo6
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            type: string
+    ComparatorFunction:
+      title: ComparatorFunction
+      x-stoplight:
+        id: owa4sf1ywckae
+      type: object
+      properties:
+        functionName:
+          type: string
+        parameterMap:
+          type: object
+    CustomField:
+      title: CustomField
+      x-stoplight:
+        id: chu5xn06cizji
+      type: object
+      properties:
+        configurationParameters:
+          type: object
+        customFieldId:
+          type: integer
+          format: int32
+        entityName:
+          type: string
+        fieldName:
+          type: string
+        orderSeq:
+          type: integer
+          format: int32
+        sourceFieldName:
+          type: string
+        transformationFunctionName:
+          type: string
+    DataProfile:
+      title: DataProfile
+      x-stoplight:
+        id: toqva72ln1w65
+      type: object
+      properties:
+        dataProfileId:
+          type: integer
+          format: int32
+        dataSourceId:
+          type: integer
+          format: int32
+        dateCompletedStr:
+          type: string
+        dateInitiatedStr:
+          type: string
+        entityId:
+          type: integer
+          format: int32
+    DataProfileAttribute:
+      title: DataProfileAttribute
+      x-stoplight:
+        id: gi2cv1ywotaiv
+      type: object
+      properties:
+        attributeId:
+          type: integer
+          format: int32
+        attributeName:
+          type: string
+        averageLength:
+          type: number
+          format: double
+        averageTokenFrequency:
+          type: number
+          format: double
+        averageValue:
+          type: number
+          format: double
+        blockingPairs:
+          type: integer
+          format: int32
+        datatypeId:
+          type: integer
+          format: int32
+        distinctCount:
+          type: integer
+          format: int32
+        duplicateCount:
+          type: integer
+          format: int32
+        entropy:
+          type: number
+          format: double
+        getuValue:
+          type: number
+          format: double
+        maximumEntropy:
+          type: number
+          format: double
+        maximumLength:
+          type: integer
+          format: int32
+        maximumValue:
+          type: number
+          format: double
+        minimumLength:
+          type: integer
+          format: int32
+        minumumValue:
+          type: number
+          format: double
+        nullCount:
+          type: integer
+          format: int32
+        nullRate:
+          type: number
+          format: double
+        rowCount:
+          type: integer
+          format: int32
+        standardDeviation:
+          type: number
+          format: double
+        uniqueCount:
+          type: integer
+          format: int32
+        variance:
+          type: number
+          format: double
+    DataProfileAttributeValue:
+      title: DataProfileAttributeValue
+      x-stoplight:
+        id: 5ro9yza1a58q2
+      type: object
+      properties:
+        attributeId:
+          type: integer
+          format: int32
+        attributeValue:
+          type: string
+        attributeValueId:
+          type: integer
+          format: int32
+        frequency:
+          type: integer
+          format: int32
+    DeterministicMatchingConfiguration:
+      title: DeterministicMatchingConfiguration
+      x-stoplight:
+        id: 8mwh31c6v3qmu
+      type: object
+      properties:
+        entityName:
+          type: string
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchRule'
+    Entity:
+      title: Entity
+      x-stoplight:
+        id: kp5jos48e3l4a
+      type: object
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityAttribute'
+        dateChangedStr:
+          type: string
+        dateCreatedStr:
+          type: string
+        description:
+          type: string
+        displayName:
+          type: string
+        entityId:
+          type: integer
+          format: int32
+        entityVersionId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        synchronousMatching:
+          type: boolean
+        userChangedById:
+          type: integer
+          format: int32
+        userCreatedById:
+          type: integer
+          format: int32
+        userVoidedById:
+          type: integer
+          format: int32
+        versionId:
+          type: integer
+          format: int32
+    EntityAttribute:
+      title: EntityAttribute
+      x-stoplight:
+        id: 17zo6qh3jz8lw
+      type: object
+      properties:
+        caseInsensitive:
+          type: boolean
+        datatype:
+          $ref: '#/components/schemas/EntityAttributeDatatype'
+        dateChangedStr:
+          type: string
+        dateCreatedStr:
+          type: string
+        dateVoidedStr:
+          type: string
+        description:
+          type: string
+        displayName:
+          type: string
+        displayOrder:
+          type: integer
+          format: int32
+        entityAttributeId:
+          type: integer
+          format: int32
+        indexed:
+          type: boolean
+        isCustom:
+          type: boolean
+        name:
+          type: string
+        searchable:
+          type: boolean
+        userChangedById:
+          type: integer
+          format: int32
+        userCreatedById:
+          type: integer
+          format: int32
+        userVoidedById:
+          type: integer
+          format: int32
+    EntityAttributeDatatype:
+      title: EntityAttributeDatatype
+      x-stoplight:
+        id: qj935x83vnjzu
+      type: object
+      properties:
+        datatypeCd:
+          type: integer
+          format: int32
+        displayName:
+          type: string
+        name:
+          type: string
+    EntityAttributeGroup:
+      title: EntityAttributeGroup
+      x-stoplight:
+        id: swje7w76ef1i6
+      type: object
+      description: ''
+      properties:
+        displayName:
+          type: string
+        displayOrder:
+          type: integer
+          format: int32
+        entityAttributeGroupId:
+          type: integer
+          format: int32
+        entityAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityAttributeGroupAttribute'
+        entityId:
+          type: integer
+          format: int32
+        name:
+          type: string
+    EntityAttributeGroupAttribute:
+      title: EntityAttributeGroupAttribute
+      x-stoplight:
+        id: qg24bteej3egt
+      type: object
+      properties:
+        entityAttributeGroupAttributeId:
+          type: integer
+          format: int32
+        entityAttributeId:
+          type: integer
+          format: int32
+    EthnicGroup:
+      title: EthnicGroup
+      x-stoplight:
+        id: 396xdka13qg14
+      type: object
+      properties:
+        enthicGroupCd:
+          type: integer
+          format: int32
+        enthicGroupCode:
+          type: string
+        enthnicGroupDescription:
+          type: string
+        enthicGroupName:
+          type: string
+    FieldValue:
+      title: FieldValue
+      x-stoplight:
+        id: yz1lyjedy7cgf
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    File:
+      title: File
+      x-stoplight:
+        id: 0rzei19fg42sh
+      type: object
+      properties:
+        dateCreatedStr:
+          type: string
+        filename:
+          type: string
+        imported:
+          type: string
+        isEntity:
+          type: string
+        name:
+          type: string
+        ownerId:
+          type: integer
+          format: int32
+        profiled:
+          type: string
+        userFileId:
+          type: integer
+          format: int32
+    Gender:
+      title: Gender
+      x-stoplight:
+        id: lt0f9o9g160fo
+      type: object
+      properties:
+        genderCd:
+          type: integer
+          format: int32
+        genderCode:
+          type: string
+        genderDescription:
+          type: string
+        genderName:
+          type: string
+    Identifier:
+      title: Identifier
+      x-stoplight:
+        id: jwo46a2v20xqz
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+        dateVoided:
+          type: string
+          format: date-time
+        identifier:
+          type: string
+        identifierDomain:
+          $ref: '#/components/schemas/IdentifierDomain'
+        identifierDomainId:
+          type: integer
+          format: int32
+        identifierId:
+          type: integer
+          format: int64
+        internalRecordId:
+          type: string
+    IdentifierDomain:
+      title: IdentifierDomain
+      x-stoplight:
+        id: 6skbool6gj7p6
+      type: object
+      properties:
+        dateCreatedStr:
+          type: string
+        identifierDomainDescription:
+          type: string
+        identifierDomainId:
+          type: integer
+          format: int32
+        identifierDomainName:
+          type: string
+        namespaceIdentifier:
+          type: string
+        universalIdentifier:
+          type: string
+        universalIdentifierTypeCode:
+          type: string
+    IdentifierDomainAttribute:
+      title: IdentifierDomainAttribute
+      x-stoplight:
+        id: c8lltlv9itax4
+      type: object
+      properties:
+        attributeName:
+          type: string
+        attributeValue:
+          type: string
+        identifierDomainAttrubuteId:
+          type: integer
+          format: int32
+        identifierDomainId:
+          type: integer
+          format: int32
+    IdentifierDomainAttributeRequest:
+      title: IdentifierDomainAttributeRequest
+      x-stoplight:
+        id: ilhboq590vode
+      type: object
+      properties:
+        attributeName:
+          type: string
+        attributeValue:
+          type: string
+        identifierDomain:
+          $ref: '#/components/schemas/IdentifierDomain'
+    IdentifierUpdateEntry:
+      title: IdentifierUpdateEntry
+      x-stoplight:
+        id: 4avpu11d8jybt
+      type: object
+      properties:
+        identifier:
+          type: string
+        identifierDomain:
+          $ref: '#/components/schemas/IdentifierDomain'
+    IdentifierUpdateEvent:
+      title: IdentifierUpdateEvent
+      x-stoplight:
+        id: a7uaeyss2gk7t
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+        identifierUpdateEventId:
+          type: integer
+          format: int64
+        postUpdateIdentifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentifierUpdateEntry'
+        preUpdateIdentifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentifierUpdateEntry'
+        source:
+          type: string
+        transition:
+          type: string
+    JSONArray:
+      title: JSONArray
+      x-stoplight:
+        id: xety1xitdthum
+      type: object
+      properties:
+        escapeForwardSlashAlways:
+          type: boolean
+    JobEntry:
+      title: JobEntry
+      x-stoplight:
+        id: nft3gpwvokqdy
+      type: object
+      properties:
+        dateCompleted:
+          type: string
+        dateCreated:
+          type: string
+        dateStarted:
+          type: string
+        itemsErrored:
+          type: integer
+          format: int32
+        itemsProcessed:
+          type: integer
+          format: int32
+        itemsSuccessful:
+          type: integer
+          format: int32
+        jobDescription:
+          type: string
+        jobEntryId:
+          type: integer
+          format: int32
+        jobParameters:
+          type: string
+        jobStatus:
+          $ref: '#/components/schemas/JobStatus'
+        jobType:
+          $ref: '#/components/schemas/JobType'
+    JobEntryEventLog:
+      title: JobEntryEventLog
+      x-stoplight:
+        id: 93ttjmtz3hhro
+      type: object
+      properties:
+        dateCreated:
+          type: string
+        eventEntryEventLogId:
+          type: integer
+          format: int32
+        logMessage:
+          type: string
+    JobStatus:
+      title: JobStatus
+      x-stoplight:
+        id: htyq5yhae66tz
+      type: object
+      properties:
+        jobStatusCd:
+          type: integer
+          format: int32
+        jobStatusDescription:
+          type: string
+        jobStatusName:
+          type: string
+    JobType:
+      title: JobType
+      x-stoplight:
+        id: g2kkrugc8zoth
+      type: object
+      properties:
+        jobTypeCd:
+          type: integer
+          format: int32
+        jobTypeDescription:
+          type: string
+        jobTypeName:
+          type: string
+    Language:
+      title: Language
+      x-stoplight:
+        id: gnxdk6zvnagrp
+      type: object
+      properties:
+        languageCd:
+          type: integer
+          format: int32
+        languageCode:
+          type: string
+        languageDescription:
+          type: string
+        languageName:
+          type: string
+    LinkSource:
+      title: LinkSource
+      x-stoplight:
+        id: fn0otqpcg1weq
+      type: object
+      properties:
+        linkSourceId:
+          type: integer
+          format: int32
+        sourceDescription:
+          type: string
+        sourceName:
+          type: string
+    LoggedLink:
+      title: LoggedLink
+      x-stoplight:
+        id: bhcgeueeqmho6
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+        isNullScored:
+          type: boolean
+        label:
+          type: string
+        leftInRecordId:
+          type: string
+        leftRecordId:
+          type: integer
+          format: int64
+        linkId:
+          type: string
+        rightInRecordId:
+          type: string
+        rightRecordId:
+          type: integer
+          format: int64
+        vectorValue:
+          type: integer
+          format: int32
+        weight:
+          type: number
+          format: double
+    MatchField:
+      title: MatchField
+      x-stoplight:
+        id: d8nvtddlylqz2
+      type: object
+      properties:
+        comparatorFunction:
+          $ref: '#/components/schemas/ComparatorFunction'
+        fieldName:
+          type: string
+        matchThreshold:
+          type: number
+          format: float
+        mvalue:
+          type: number
+          format: double
+        nullScoring:
+          type: boolean
+        nullWeight:
+          type: number
+          format: float
+        uvalue:
+          type: number
+          format: double
+    MatchRule:
+      title: MatchRule
+      x-stoplight:
+        id: ief50fnxxdpf0
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchField'
+        name:
+          type: string
+    MergePersonsRequest:
+      title: MergePersonsRequest
+      x-stoplight:
+        id: 76jrswrtd861a
+      type: object
+      properties:
+        retiredIdentifier:
+          $ref: '#/components/schemas/PersonIdentifier'
+        survivingIdentifier:
+          $ref: '#/components/schemas/PersonIdentifier'
+    NameType:
+      title: NameType
+      x-stoplight:
+        id: l77dek9r5ld54
+      type: object
+      properties:
+        nameTypeCd:
+          type: integer
+          format: int32
+        nameTypeCode:
+          type: string
+        nameTypeDescription:
+          type: string
+        nameTypeName:
+          type: string
+    Nationality:
+      title: Nationality
+      x-stoplight:
+        id: kuxfz333iimw1
+      type: object
+      properties:
+        nationalityCd:
+          type: integer
+          format: int32
+        nationalityCode:
+          type: string
+        nationalityDescription:
+          type: string
+        nationalityName:
+          type: string
+    Permission:
+      title: Permission
+      x-stoplight:
+        id: s8nloe1mnayg7
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        permissionId:
+          type: integer
+          format: int32
+    Person:
+      title: Person
+      x-stoplight:
+        id: mwvh83djw35nz
+      type: object
+      properties:
+        account:
+          type: string
+        accountIdentifierDomain:
+          $ref: '#/components/schemas/IdentifierDomain'
+        address1:
+          type: string
+        adress2:
+          type: string
+        addressType:
+          $ref: '#/components/schemas/AddressType'
+        birthOrder:
+          type: integer
+          format: int32
+        birthPlace:
+          type: string
+        cell:
+          type: string
+        cellId:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        countryCode:
+          type: string
+        custom1:
+          type: string
+        custom10:
+          type: string
+        custom11:
+          type: string
+        custom12:
+          type: string
+        custom13:
+          type: string
+        custom14:
+          type: string
+        custom15:
+          type: string
+        custom16:
+          type: string
+        custom17:
+          type: string
+        custom18:
+          type: string
+        custom19:
+          type: string
+        custom2:
+          type: string
+        custom20:
+          type: string
+        custom3:
+          type: string
+        custom4:
+          type: string
+        custom5:
+          type: string
+        custom6:
+          type: string
+        custom7:
+          type: string
+        custom8:
+          type: string
+        custom9:
+          type: string
+        dateChanged:
+          type: string
+          format: date-time
+        dateCreated:
+          type: string
+          format: date-time
+        dateOfBirth:
+          type: string
+          format: date-time
+        dateVoided:
+          type: string
+          format: date-time
+        deathInd:
+          type: string
+        deathTime:
+          type: string
+          format: date-time
+        degree:
+          type: string
+        district:
+          type: string
+        districtId:
+          type: string
+        email:
+          type: string
+        ethnicGroup:
+          $ref: '#/components/schemas/EthnicGroup'
+        familyName:
+          type: string
+        familyName2:
+          type: string
+        fatherName:
+          type: string
+        gender:
+          $ref: '#/components/schemas/Gender'
+        givenName:
+          type: string
+        groupNumber:
+          type: string
+        language:
+          $ref: '#/components/schemas/Language'
+        maritalStatusCode:
+          type: string
+        middleName:
+          type: string
+        motherName:
+          type: string
+        mothersMaidenName:
+          type: string
+        multipleBirthInd:
+          type: string
+        nameType:
+          $ref: '#/components/schemas/NameType'
+        nationality:
+          $ref: '#/components/schemas/Nationality'
+        personId:
+          type: integer
+          format: int32
+        personIdentifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonIdentifier'
+        phoneAreaCode:
+          type: string
+        phoneCountryCode:
+          type: string
+        phoneExt:
+          type: string
+        phoneNumber:
+          type: string
+        PhoneType:
+          $ref: '#/components/schemas/PhoneType'
+        postalCode:
+          type: string
+        prefix:
+          type: string
+        province:
+          type: string
+        race:
+          $ref: '#/components/schemas/Race'
+        religion:
+          $ref: '#/components/schemas/Religion'
+        sector:
+          type: string
+        sectorId:
+          type: string
+        ssn:
+          type: string
+        state:
+          type: string
+        suffix:
+          type: string
+        userChangedBy:
+          $ref: '#/components/schemas/User'
+        userCreatedBy:
+          $ref: '#/components/schemas/User'
+        userVoidedBy:
+          $ref: '#/components/schemas/User'
+        village:
+          type: string
+        villageId:
+          type: string
+    PersonIdentifier:
+      title: PersonIdentifier
+      x-stoplight:
+        id: fd8d5uhwda91y
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+        dateVoided:
+          type: string
+          format: date-time
+        identifier:
+          type: string
+        identifierDomain:
+          $ref: '#/components/schemas/IdentifierDomain'
+        personIdentifierId:
+          type: integer
+          format: int32
+        userCreatedBy:
+          $ref: '#/components/schemas/User'
+        userVoidedBy:
+          $ref: '#/components/schemas/User'
+    PersonLink:
+      title: PersonLink
+      x-stoplight:
+        id: ju7vhzz4aqh3v
+      type: object
+      properties:
+        clusterId:
+          type: integer
+          format: int32
+        dateCreated:
+          type: string
+          format: date-time
+        linkSource:
+          $ref: '#/components/schemas/LinkSource'
+        personLeft:
+          $ref: '#/components/schemas/Person'
+        personLinkId:
+          type: integer
+          format: int32
+        personRight:
+          $ref: '#/components/schemas/Person'
+        userCreatedBy:
+          $ref: '#/components/schemas/User'
+        vector:
+          type: integer
+          format: int32
+        weight:
+          type: number
+          format: double
+    PersonPagedRequest:
+      title: PersonPagedRequest
+      x-stoplight:
+        id: f5mw406xthdxq
+      type: object
+      properties:
+        firstResult:
+          type: integer
+          format: int32
+        maxResults:
+          type: integer
+          format: int32
+        person:
+          $ref: '#/components/schemas/Person'
+    PhoneType:
+      title: PhoneType
+      x-stoplight:
+        id: 4fi9595qdtnq1
+      type: object
+      properties:
+        phoneTypeCd:
+          type: integer
+          format: int32
+        phoneTypeCode:
+          type: string
+        phoneTypeDescription:
+          type: string
+        phoneTypeName:
+          type: string
+    ProbabilisticMatchingConfiguration:
+      title: ProbabilisticMatchingConfiguration
+      x-stoplight:
+        id: gs1h00rtkst5h
+      type: object
+      properties:
+        configurationDirectory:
+          type: string
+        convergenceError:
+          type: number
+          format: double
+        entityName:
+          type: string
+        falseNegativeProbability:
+          type: number
+          format: float
+        falsePositiveProbability:
+          type: number
+          format: float
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchField'
+        initialMValue:
+          type: number
+          format: double
+        initialPValue:
+          type: number
+          format: double
+        initialUValue:
+          type: number
+          format: double
+        loggingByVectors:
+          type: boolean
+        loggingByVectorsFraction:
+          type: number
+          format: double
+        loggingByWeight:
+          type: boolean
+        loggingByWeightFraction:
+          type: number
+          format: double
+        loggingByWeightLowerBound:
+          type: number
+          format: double
+        loggingByWeightUpperBound:
+          type: number
+          format: double
+        loggingDestination:
+          type: string
+        loggingVectors:
+          type: array
+          items:
+            type: integer
+            format: int32
+        lowerBound:
+          type: number
+          format: double
+        maxIterations:
+          type: integer
+          format: int32
+        pvalue:
+          type: number
+          format: double
+        samplingRate:
+          type: number
+          format: float
+        upperBound:
+          type: number
+          format: double
+        vectorConfig:
+          type: array
+          items:
+            $ref: '#/components/schemas/VectorConfiguration'
+    Race:
+      title: Race
+      x-stoplight:
+        id: s8ogu1q8jjba6
+      type: object
+      properties:
+        raceCd:
+          type: integer
+          format: int32
+        raceCode:
+          type: string
+        raceDescription:
+          type: string
+        raceName:
+          type: string
+    Record:
+      title: Record
+      x-stoplight:
+        id: 9oq53pwqu5crt
+      type: object
+      properties:
+        dateChanged:
+          type: string
+        dateCreated:
+          type: string
+        dateVoided:
+          type: string
+        entityId:
+          type: integer
+          format: int32
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldValue'
+        identifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Identifier'
+        internalRecordId:
+          type: string
+        recordId:
+          type: integer
+          format: int64
+        userChangedBy:
+          $ref: '#/components/schemas/User'
+        userCreatedBy:
+          $ref: '#/components/schemas/User'
+        userVoidedBy:
+          $ref: '#/components/schemas/User'
+    RecordLink:
+      title: RecordLink
+      x-stoplight:
+        id: 7cv5kzfzhemoi
+      type: object
+      properties:
+        dateCreated:
+          type: string
+        dateReviewed:
+          type: string
+        entityId:
+          type: integer
+          format: int32
+        leftRecord:
+          $ref: '#/components/schemas/Record'
+        recordLinkId:
+          type: string
+        rightRecord:
+          $ref: '#/components/schemas/Record'
+        source:
+          type: string
+        state:
+          type: string
+        userCreatedBy:
+          type: integer
+          format: int32
+        userReviewedBy:
+          type: integer
+          format: int32
+        vector:
+          type: integer
+          format: int32
+        weight:
+          type: number
+          format: double
+    RecordPair:
+      title: RecordPair
+      x-stoplight:
+        id: 7q7x4pkbyvyql
+      type: object
+      properties:
+        leftRecord:
+          $ref: '#/components/schemas/Record'
+        matchOutcome:
+          type: integer
+          format: int32
+        rightRecord:
+          $ref: '#/components/schemas/Record'
+        weight:
+          type: number
+          format: double
+    Religion:
+      title: Religion
+      x-stoplight:
+        id: 1rcvwqg9fipv7
+      type: object
+      properties:
+        religionCd:
+          type: integer
+          format: int32
+        religionCode:
+          type: string
+        religionDescription:
+          type: string
+        religionName:
+          type: string
+    Report:
+      title: Report
+      x-stoplight:
+        id: d1f0frwaqqhyo
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        nameDisplayed:
+          type: string
+        reportId:
+          type: integer
+          format: int32
+        reportParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportParameter'
+    ReportParameter:
+      title: ReportParameter
+      x-stoplight:
+        id: 9z47elqlmuttj
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        nameDisplayed:
+          type: string
+        parameterDatatype:
+          type: integer
+          format: int32
+        reportParameterId:
+          type: integer
+          format: int32
+    ReportRequest:
+      title: ReportRequest
+      x-stoplight:
+        id: ovwgpaopi3b49
+      type: object
+      properties:
+        entity:
+          $ref: '#/components/schemas/Entity'
+        reportId:
+          type: integer
+          format: int32
+        reportParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportRequestParameter'
+        requestDate:
+          type: string
+          format: date-time
+    ReportRequestEntry:
+      title: ReportRequestEntry
+      x-stoplight:
+        id: zi366s3v4logr
+      type: object
+      properties:
+        dateCompleted:
+          type: string
+          format: date-time
+        dateCompletedStr:
+          type: string
+        dateRequested:
+          type: string
+        dateRequestedStr:
+          type: string
+        entity:
+          $ref: '#/components/schemas/Entity'
+        report:
+          $ref: '#/components/schemas/Report'
+        reportHandle:
+          type: string
+        reportRequestId:
+          type: integer
+          format: int32
+        userRequested:
+          $ref: '#/components/schemas/User'
+    ReportRequestParameter:
+      title: ReportRequestParameter
+      x-stoplight:
+        id: r3qwe8cqasl32
+      type: object
+      properties:
+        parameterName:
+          type: string
+        parameterValue:
+          type: string
+    ReviewRecordPair:
+      title: ReviewRecordPair
+      x-stoplight:
+        id: 6lsw288azh81t
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+        dateReviewed:
+          type: string
+          format: date-time
+        linkSource:
+          $ref: '#/components/schemas/LinkSource'
+        personLeft:
+          $ref: '#/components/schemas/Person'
+        personRight:
+          $ref: '#/components/schemas/Person'
+        recordsMathch:
+          type: boolean
+        reviewRecordPairId:
+          type: integer
+          format: int32
+        userCreatedBy:
+          $ref: '#/components/schemas/User'
+        userReviewedBy:
+          $ref: '#/components/schemas/User'
+        vector:
+          type: integer
+          format: int32
+        weight:
+          type: number
+          format: double
+    Role:
+      title: Role
+      x-stoplight:
+        id: oqs39c05zfpbt
+      type: object
+      properties:
+        description:
+          type: string
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+    StringList:
+      title: StringList
+      x-stoplight:
+        id: qkzghve89l58o
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: string
+    SynonymEntry:
+      title: SynonymEntry
+      x-stoplight:
+        id: qjo60p3g3yzjh
+      type: object
+      properties:
+        fieldName:
+          type: string
+        synonymId:
+          type: string
+        synonyms:
+          type: array
+          items:
+            type: string
+    TransformationFunction:
+      title: TransformationFunction
+      x-stoplight:
+        id: d8ymzu39wf3yc
+      type: object
+      properties:
+        functionName:
+          type: string
+        name:
+          type: string
+        parameterNames:
+          type: array
+          items:
+            type: string
+    User:
+      title: User
+      x-stoplight:
+        id: 0s502qrsqif3d
+      type: object
+      properties:
+        accountExpired:
+          type: boolean
+        accountLocked:
+          type: boolean
+        address:
+          $ref: '#/components/schemas/Address'
+        credentialsExpired:
+          type: boolean
+        email:
+          type: string
+        enabled:
+          type: boolean
+        firstName:
+          type: string
+        id:
+          type: integer
+          format: int64
+        identifierDomain:
+          $ref: '#/components/schemas/IdentifierDomain'
+        lastName:
+          type: string
+        password:
+          type: string
+        passwordHint:
+          type: string
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+        phoneNumber:
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        username:
+          type: string
+        website:
+          type: string
+    UserFile:
+      title: UserFile
+      x-stoplight:
+        id: bsjxe23p30key
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+        filename:
+          type: string
+        imported:
+          type: string
+        isEntity:
+          type: boolean
+        name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/User'
+        profileProcessed:
+          type: string
+        profiled:
+          type: string
+        rowsImported:
+          type: integer
+          format: int32
+        rowsProcessed:
+          type: integer
+          format: int32
+        userFileId:
+          type: integer
+          format: int32
+    UserSession:
+      title: UserSession
+      x-stoplight:
+        id: ryniktu3gtqph
+      type: object
+      properties:
+        sessionId:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+    VectorConfiguration:
+      title: VectorConfiguration
+      x-stoplight:
+        id: mmimgtwqa0w95
+      type: object
+      properties:
+        algorithmClassification:
+          type: integer
+          format: int32
+        loggedLinkCount:
+          type: integer
+          format: int64
+        manualClassification:
+          type: integer
+          format: int32
+        vectorValue:
+          type: integer
+          format: int32
+        weight:
+          type: number
+          format: double
+    authenticationRequest:
+      title: authenticationRequest
+      x-stoplight:
+        id: g7nqayfp3p2v9
+      type: object
+      properties:
+        password:
+          type: string
+        username:
+          type: string
+  securitySchemes:
+    API Key:
+      name: OPENEMPI_SESSION_KEY
+      type: apiKey
+      in: header
+      description: ''
+security:
+  - API Key: []
+tags:
+  - name: Audit Events Resource
+  - name: Blocking Configuration Resource
+  - name: Custom Fields Resource
+  - name: Data Profile Resource
+  - name: Deterministic Matching Configuration Resource
+  - name: Entities Resource
+  - name: Entity Attribute Groups Resource
+  - name: Entity Attributes Resource
+  - name: File Resource
+  - name: Identifier Domains Resource
+  - name: Notifications Resource
+  - name: Person Manager Resource
+  - name: Person Query Resource
+  - name: PIX/PDQ Service Resource
+  - name: Probabilistic Matching Configuration Resource
+  - name: Record Links Resource
+  - name: Records Resource
+  - name: Security Manager Resource
+  - name: Security Resource
+  - name: String Comparators Resource
+  - name: Synonyms Resource
+  - name: Transformation Functions Resource
